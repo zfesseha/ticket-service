@@ -1,18 +1,12 @@
 package com.zfesseha.ticketservice.services;
 
-import com.zfesseha.ticketservice.comparators.LeftRightFrontBackComparator;
 import com.zfesseha.ticketservice.models.Seat;
 import com.zfesseha.ticketservice.models.SeatHold;
 import com.zfesseha.ticketservice.pool.SeatPool;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class SimpleTicketService implements TicketService {
 
-    private TreeSet<Seat> seats;
     private SeatPool seatPool;
 
     public SimpleTicketService(SeatPool seatPool, int rowCapacity, int columnCapacity) {
