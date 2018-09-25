@@ -1,6 +1,9 @@
 package com.zfesseha.ticketservice.services;
 
+import com.zfesseha.ticketservice.comparators.LeftRightFrontBackComparator;
 import com.zfesseha.ticketservice.models.SeatHold;
+import com.zfesseha.ticketservice.pool.SeatPool;
+import com.zfesseha.ticketservice.pool.SortedSeatPool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +18,8 @@ public class SimpleTicketServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        ticketService = new SimpleTicketService(20, 20);
+        SeatPool seatPool = new SortedSeatPool(new LeftRightFrontBackComparator());
+        ticketService = new SimpleTicketService(seatPool, 20, 20);
     }
 
     @After

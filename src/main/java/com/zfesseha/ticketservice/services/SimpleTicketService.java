@@ -3,7 +3,9 @@ package com.zfesseha.ticketservice.services;
 import com.zfesseha.ticketservice.comparators.LeftRightFrontBackComparator;
 import com.zfesseha.ticketservice.models.Seat;
 import com.zfesseha.ticketservice.models.SeatHold;
+import com.zfesseha.ticketservice.pool.SeatPool;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -11,29 +13,25 @@ import java.util.TreeSet;
 public class SimpleTicketService implements TicketService {
 
     private TreeSet<Seat> seats;
+    private SeatPool seatPool;
 
-    public SimpleTicketService(int rowCapacity, int columnCapacity) {
-        this.seats = new TreeSet<>(new LeftRightFrontBackComparator());
+    public SimpleTicketService(SeatPool seatPool, int rowCapacity, int columnCapacity) {
+        this.seatPool = seatPool;
         for (int i = 0; i < rowCapacity; i++) {
             for (int j = 0; j < columnCapacity; j++) {
-                seats.add(new Seat(i, j));
+                this.seatPool.add(new Seat(i, j));
             }
         }
     }
 
     @Override
     public int numSeatsAvailable() {
-        return seats.size();
+        return seatPool.getCurrentCapacity();
     }
 
     @Override
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
-        Set heldSeats = new HashSet<Seat>(numSeats);
-        while (numSeats > 0) {
-            heldSeats.add(seats.pollFirst());
-            numSeats--;
-        }
-        return new SeatHold(customerEmail, heldSeats);
+        return new SeatHold(customerEmail, seatPool.getSeats(numSeats));
     }
 
     @Override
