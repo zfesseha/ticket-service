@@ -10,7 +10,6 @@ public class SeatHold {
 //    private DateTime expirationDate;
     private Set<Seat> seats;
 
-
     public SeatHold(String customerEmail, Set seats) {
 //      TODO: Fix id
         this.id = null;

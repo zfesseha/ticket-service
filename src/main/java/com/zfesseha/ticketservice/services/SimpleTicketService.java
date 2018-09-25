@@ -1,7 +1,7 @@
 package com.zfesseha.ticketservice.services;
 
-import com.zfesseha.ticketservice.models.Seat;
 import com.zfesseha.ticketservice.models.SeatHold;
+import com.zfesseha.ticketservice.models.SeatReserve;
 import com.zfesseha.ticketservice.pool.SeatPool;
 
 
@@ -9,13 +9,8 @@ public class SimpleTicketService implements TicketService {
 
     private SeatPool seatPool;
 
-    public SimpleTicketService(SeatPool seatPool, int rowCapacity, int columnCapacity) {
+    public SimpleTicketService(SeatPool seatPool) {
         this.seatPool = seatPool;
-        for (int i = 0; i < rowCapacity; i++) {
-            for (int j = 0; j < columnCapacity; j++) {
-                this.seatPool.add(new Seat(i, j));
-            }
-        }
     }
 
     @Override
@@ -25,7 +20,8 @@ public class SimpleTicketService implements TicketService {
 
     @Override
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
-        return new SeatHold(customerEmail, seatPool.getSeats(numSeats));
+        SeatHold seatHold = new SeatHold(customerEmail, seatPool.getSeats(numSeats));
+        return seatHold;
     }
 
     @Override

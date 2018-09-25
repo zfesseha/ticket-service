@@ -1,6 +1,5 @@
 package com.zfesseha.ticketservice.pool;
 
-import com.zfesseha.ticketservice.comparators.LeftRightFrontBackComparator;
 import com.zfesseha.ticketservice.models.Seat;
 
 import java.util.Comparator;
@@ -16,6 +15,7 @@ public class SortedSeatPool implements SeatPool {
         this.seats = new TreeSet<>(comparator);
     }
 
+    // TODO: should not be allowed. Use builder and make immutable
     @Override
     public SeatPool add(Seat seat) {
         seats.add(seat);
