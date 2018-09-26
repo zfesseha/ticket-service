@@ -5,9 +5,9 @@ import com.zfesseha.ticketservice.dao.SeatReservationDAO;
 import com.zfesseha.ticketservice.exceptions.NoSeatHoldForIdException;
 import com.zfesseha.ticketservice.models.SeatHold;
 import com.zfesseha.ticketservice.models.SeatReservation;
-import com.zfesseha.ticketservice.pool.SeatPool;
-import com.zfesseha.ticketservice.pool.SeatPoolFactory;
-import org.junit.After;
+import com.zfesseha.ticketservice.seats.FixedDurationExpirationResolver;
+import com.zfesseha.ticketservice.seats.SeatPool;
+import com.zfesseha.ticketservice.seats.SeatPoolFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,6 +24,7 @@ public class SimpleTicketServiceTest {
     private SeatReservationDAO seatReservationDAO;
 
     private static final String TEST_CUSTOMER_EMAIL = "test@email.com";
+    private static final int EXPIRATION_DURATION_SECONDS = 5;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -33,11 +34,8 @@ public class SimpleTicketServiceTest {
         SeatPool seatPool = SeatPoolFactory.leftRightFrontBackRectangularSeatPool(20, 20);
         seatHoldDAO = new SeatHoldDAO();
         seatReservationDAO = new SeatReservationDAO();
-        ticketService = new SimpleTicketService(seatPool, seatHoldDAO, seatReservationDAO);
-    }
-
-    @After
-    public void tearDown() throws Exception {
+        FixedDurationExpirationResolver expirationResolver = new FixedDurationExpirationResolver(EXPIRATION_DURATION_SECONDS);
+        ticketService = new SimpleTicketService(seatPool, expirationResolver, seatHoldDAO, seatReservationDAO);
     }
 
     @Test
@@ -104,10 +102,12 @@ public class SimpleTicketServiceTest {
         assertNotNull("SeatHold2 should not be removed from SeatHoldDAO", seatHoldDAO.get(seatHold2.getId()));
     }
 
+    // TODO: Equals method in the actual objects might be better.
     private void verifySeatHoldsEqual(SeatHold seatHold1, SeatHold seatHold2) {
         assertEquals("Ids of the two seatHolds don't match.", seatHold1.getId(), seatHold2.getId());
         assertEquals("Customer emails of the two seatHolds don't match.", seatHold1.getCustomerEmail(), seatHold2.getCustomerEmail());
         assertEquals("Held seats of the two seatHolds don't match.", seatHold1.getSeats(), seatHold2.getSeats());
+        assertEquals("Expiration dates of the two seatHolds don't match.", seatHold1.getExpirationDate(), seatHold2.getExpirationDate());
     }
 
     private void verifyReservationDetails(SeatReservation seatReservation, SeatHold seatHold) {

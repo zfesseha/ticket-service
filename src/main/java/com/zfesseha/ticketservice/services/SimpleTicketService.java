@@ -5,16 +5,21 @@ import com.zfesseha.ticketservice.dao.SeatReservationDAO;
 import com.zfesseha.ticketservice.exceptions.NoSeatHoldForIdException;
 import com.zfesseha.ticketservice.models.SeatHold;
 import com.zfesseha.ticketservice.models.SeatReservation;
-import com.zfesseha.ticketservice.pool.SeatPool;
+import com.zfesseha.ticketservice.seats.ExpirationResolver;
+import com.zfesseha.ticketservice.seats.SeatPool;
+import org.joda.time.DateTime;
 
 public class SimpleTicketService implements TicketService {
 
     private SeatPool seatPool;
+    private ExpirationResolver expirationResolver;
     private SeatHoldDAO seatHoldDao;
     private SeatReservationDAO seatReservationDao;
 
-    public SimpleTicketService(SeatPool seatPool, SeatHoldDAO seatHoldDAO, SeatReservationDAO seatReservationDAO) {
+    public SimpleTicketService(SeatPool seatPool, ExpirationResolver expirationResolver,
+                               SeatHoldDAO seatHoldDAO, SeatReservationDAO seatReservationDAO) {
         this.seatPool = seatPool;
+        this.expirationResolver = expirationResolver;
         this.seatHoldDao = seatHoldDAO;
         this.seatReservationDao = seatReservationDAO;
     }
@@ -26,7 +31,8 @@ public class SimpleTicketService implements TicketService {
 
     @Override
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
-        SeatHold seatHold = seatHoldDao.save(new SeatHold(customerEmail, seatPool.getSeats(numSeats)));
+        DateTime expiration = expirationResolver.expirationDate(numSeats, customerEmail);
+        SeatHold seatHold = seatHoldDao.save(new SeatHold(customerEmail, seatPool.getSeats(numSeats), expiration));
         return seatHold;
     }
 

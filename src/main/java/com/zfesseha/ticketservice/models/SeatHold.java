@@ -1,27 +1,29 @@
 package com.zfesseha.ticketservice.models;
 
+import org.joda.time.DateTime;
+
 import java.util.Set;
 
 public class SeatHold implements Entity<Integer> {
 
     private Integer id;
     private final String customerEmail;
-//    TODO: Add additional properties
-//    private DateTime expirationDate;
     private final Set<Seat> seats;
+    private final DateTime expirationDate;
 
-    public SeatHold(String customerEmail, Set seats) {
-        this(null, customerEmail, seats);
+    public SeatHold(String customerEmail, Set seats, DateTime expirationDate) {
+        this(null, customerEmail, seats, expirationDate);
     }
 
     private SeatHold(Integer id, SeatHold seatHold) {
-        this(id, seatHold.getCustomerEmail(), seatHold.getSeats());
+        this(id, seatHold.getCustomerEmail(), seatHold.getSeats(), seatHold.getExpirationDate());
     }
 
-    private SeatHold(Integer id, String customerEmail, Set seats) {
+    private SeatHold(Integer id, String customerEmail, Set seats, DateTime expirationDate) {
         this.id = id;
         this.customerEmail = customerEmail;
         this.seats = seats;
+        this.expirationDate = expirationDate;
     }
 
     @Override
@@ -42,13 +44,18 @@ public class SeatHold implements Entity<Integer> {
         return seats;
     }
 
+    public DateTime getExpirationDate() {
+        return expirationDate;
+    }
+
     //    TODO: Remove
     @Override
     public String toString() {
         return "SeatHold{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", customerEmail='" + customerEmail + '\'' +
                 ", seats=" + seats +
+                ", expirationDate=" + expirationDate +
                 '}';
     }
 }

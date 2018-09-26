@@ -1,4 +1,4 @@
-package com.zfesseha.ticketservice.pool;
+package com.zfesseha.ticketservice.seats;
 
 import com.zfesseha.ticketservice.comparators.LeftRightFrontBackComparator;
 import com.zfesseha.ticketservice.models.Seat;
