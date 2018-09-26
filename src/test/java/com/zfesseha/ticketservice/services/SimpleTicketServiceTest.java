@@ -1,6 +1,9 @@
 package com.zfesseha.ticketservice.services;
 
+import com.zfesseha.ticketservice.dao.SeatHoldDAO;
+import com.zfesseha.ticketservice.dao.SeatReserveDAO;
 import com.zfesseha.ticketservice.models.SeatHold;
+import com.zfesseha.ticketservice.models.SeatReserve;
 import com.zfesseha.ticketservice.pool.SeatPool;
 import com.zfesseha.ticketservice.pool.SeatPoolFactory;
 import org.junit.After;
@@ -12,13 +15,17 @@ import static org.junit.Assert.assertEquals;
 public class SimpleTicketServiceTest {
 
     private SimpleTicketService ticketService;
+    private SeatHoldDAO seatHoldDAO;
+    private SeatReserveDAO seatReserveDAO;
 
     private static final String TEST_CUSTOMER_EMAIL = "test@email.com";
 
     @Before
     public void setUp() throws Exception {
         SeatPool seatPool = SeatPoolFactory.leftRightFrontBackRectangularSeatPool(20, 20);
-        ticketService = new SimpleTicketService(seatPool);
+        seatHoldDAO = new SeatHoldDAO();
+        seatReserveDAO = new SeatReserveDAO();
+        ticketService = new SimpleTicketService(seatPool, seatHoldDAO, seatReserveDAO);
     }
 
     @After
@@ -46,6 +53,8 @@ public class SimpleTicketServiceTest {
         System.out.println(seatHold);
         seatHold = ticketService.findAndHoldSeats(3, TEST_CUSTOMER_EMAIL);
         System.out.println(seatHold);
+        System.out.println("-------");
+        System.out.println(seatHoldDAO.getAll());
     }
 
     @Test

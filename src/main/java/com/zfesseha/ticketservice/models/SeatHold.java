@@ -30,7 +30,7 @@ public class SeatHold implements Entity<Integer> {
     }
 
     @Override
-    public Entity withId(Integer id) {
+    public Entity<Integer> withId(Integer id) {
         return new SeatHold(id, this);
     }
 

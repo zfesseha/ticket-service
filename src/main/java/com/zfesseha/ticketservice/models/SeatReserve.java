@@ -28,7 +28,7 @@ public class SeatReserve implements Entity<String> {
     }
 
     @Override
-    public Entity withId(String id) {
+    public Entity<String> withId(String id) {
         return new SeatReserve(id, this);
     }
 
