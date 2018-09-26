@@ -3,6 +3,7 @@ package com.zfesseha.ticketservice.services;
 import com.zfesseha.ticketservice.dao.SeatHoldDAO;
 import com.zfesseha.ticketservice.dao.SeatReservationDAO;
 import com.zfesseha.ticketservice.exceptions.NoSeatHoldForIdException;
+import com.zfesseha.ticketservice.exceptions.NotEnoughAvailableSeatsException;
 import com.zfesseha.ticketservice.models.SeatHold;
 import com.zfesseha.ticketservice.models.SeatReservation;
 import com.zfesseha.ticketservice.seats.FixedDurationExpirationResolver;
@@ -44,11 +45,30 @@ public class SimpleTicketServiceTest {
     }
 
     @Test
-    public void testAvailableSeatsAfterReservation() {
+    public void testAvailableSeatsAfterHold() {
         ticketService.findAndHoldSeats(10, TEST_CUSTOMER_EMAIL);
         assertEquals("Number of available seats doesn't match expected", 390, ticketService.numSeatsAvailable());
         ticketService.findAndHoldSeats(20, TEST_CUSTOMER_EMAIL);
         assertEquals("Number of available seats doesn't match expected", 370, ticketService.numSeatsAvailable());
+    }
+
+    @Test
+    public void testNotEnoughAvailableSeatsLargeInitialHold() {
+        thrown.expect(NotEnoughAvailableSeatsException.class);
+        thrown.expectMessage("The requested number of seats, [402], is more than what's available, [400].");
+        ticketService.findAndHoldSeats(402, TEST_CUSTOMER_EMAIL);
+    }
+
+    @Test
+    public void testNotEnoughAvailableSeatsAfterFewHolds() {
+        ticketService.findAndHoldSeats(100, TEST_CUSTOMER_EMAIL);
+        ticketService.findAndHoldSeats(100, TEST_CUSTOMER_EMAIL);
+        ticketService.findAndHoldSeats(100, TEST_CUSTOMER_EMAIL);
+        ticketService.findAndHoldSeats(98, TEST_CUSTOMER_EMAIL);
+
+        thrown.expect(NotEnoughAvailableSeatsException.class);
+        thrown.expectMessage("The requested number of seats, [3], is more than what's available, [2].");
+        ticketService.findAndHoldSeats(3, TEST_CUSTOMER_EMAIL);
     }
 
     @Test

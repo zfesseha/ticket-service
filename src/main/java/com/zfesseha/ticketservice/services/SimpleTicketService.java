@@ -3,6 +3,7 @@ package com.zfesseha.ticketservice.services;
 import com.zfesseha.ticketservice.dao.SeatHoldDAO;
 import com.zfesseha.ticketservice.dao.SeatReservationDAO;
 import com.zfesseha.ticketservice.exceptions.NoSeatHoldForIdException;
+import com.zfesseha.ticketservice.exceptions.NotEnoughAvailableSeatsException;
 import com.zfesseha.ticketservice.models.SeatHold;
 import com.zfesseha.ticketservice.models.SeatReservation;
 import com.zfesseha.ticketservice.seats.ExpirationResolver;
@@ -34,6 +35,9 @@ public class SimpleTicketService implements TicketService {
 
     @Override
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
+        if (numSeats > numSeatsAvailable()) {
+            throw new NotEnoughAvailableSeatsException(numSeats, numSeatsAvailable());
+        }
         DateTime expiration = expirationResolver.expirationDate(numSeats, customerEmail);
         SeatHold seatHold = seatHoldDao.save(new SeatHold(customerEmail, seatPool.getSeats(numSeats), expiration));
         taskManager.registerSeatHold(seatHold);
