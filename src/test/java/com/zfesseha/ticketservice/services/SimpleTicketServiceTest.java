@@ -73,6 +73,29 @@ public class SimpleTicketServiceTest {
     }
 
     @Test
+    public void testHoldSeats_HeldSeatsAreUnHeldAfterExpiration() throws Exception {
+        SeatHold seatHold = ticketService.findAndHoldSeats(5, TEST_CUSTOMER_EMAIL);
+        Thread.sleep(3000);
+        SeatHold seatHold2 = ticketService.findAndHoldSeats(15, TEST_CUSTOMER_EMAIL);
+        assertEquals("Number of items in seatHoldDAO doesn't match expected.", 2, seatHoldDAO.getAll().size());
+        assertEquals("Number of available seats doesn't match expected", 380, ticketService.numSeatsAvailable());
+        assertNotNull("There should be an entry for the first SeatHold object.", seatHoldDAO.get(seatHold.getId()));
+        assertNotNull("There should be an entry for the second SeatHold object.", seatHoldDAO.get(seatHold2.getId()));
+
+        Thread.sleep(3000);
+        // Six seconds after original seat hold request
+        assertEquals("Number of available seats should have increased by 5.", 385, ticketService.numSeatsAvailable());
+        assertNull("There should NOT be an entry for the first SeatHold object.", seatHoldDAO.get(seatHold.getId()));
+        assertNotNull("There should be an entry for the second SeatHold object.", seatHoldDAO.get(seatHold2.getId()));
+
+        Thread.sleep(3000);
+        // Nine seconds after original seat hold request
+        assertEquals("Number of available seats should have increased by 15.", 400, ticketService.numSeatsAvailable());
+        assertNull("There should NOT be an entry for the first SeatHold object.", seatHoldDAO.get(seatHold.getId()));
+        assertNull("There should NOT be an entry for the second SeatHold object.", seatHoldDAO.get(seatHold2.getId()));
+    }
+
+    @Test
     public void testReserveSeats_CanReserveHeldSeats() {
         SeatHold seatHold = ticketService.findAndHoldSeats(7, TEST_CUSTOMER_EMAIL);
         String reservationId = ticketService.reserveSeats(seatHold.getId(), seatHold.getCustomerEmail());
@@ -88,6 +111,15 @@ public class SimpleTicketServiceTest {
         thrown.expect(NoSeatHoldForIdException.class);
         thrown.expectMessage("Couldn't find SeatHold for given id: [100].");
         ticketService.reserveSeats(100, seatHold.getCustomerEmail());
+    }
+
+    @Test
+    public void testReserveSeats_ReservationShouldFailIfHoldExpires() throws Exception {
+        SeatHold seatHold = ticketService.findAndHoldSeats(7, TEST_CUSTOMER_EMAIL);
+        Thread.sleep(6000);
+        thrown.expect(NoSeatHoldForIdException.class);
+        thrown.expectMessage("Couldn't find SeatHold for given id: [" + seatHold.getId() + "].");
+        ticketService.reserveSeats(seatHold.getId(), seatHold.getCustomerEmail());
     }
 
     @Test
