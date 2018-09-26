@@ -2,36 +2,34 @@ package com.zfesseha.ticketservice.models;
 
 import java.util.Set;
 
-public class SeatHold implements Entity<Integer> {
+public class SeatReserve implements Entity<String> {
 
-    private Integer id;
+    private String id;
     private final String customerEmail;
-//    TODO: Add additional properties
-//    private DateTime expirationDate;
     private final Set<Seat> seats;
 
-    public SeatHold(String customerEmail, Set seats) {
+    public SeatReserve(String customerEmail, Set seats) {
         this(null, customerEmail, seats);
     }
 
-    private SeatHold(Integer id, SeatHold seatHold) {
-        this(id, seatHold.getCustomerEmail(), seatHold.getSeats());
+    private SeatReserve(String id, SeatReserve seatReserve) {
+        this(id, seatReserve.getCustomerEmail(), seatReserve.getSeats());
     }
 
-    private SeatHold(Integer id, String customerEmail, Set seats) {
+    private SeatReserve(String id, String customerEmail, Set seats) {
         this.id = id;
         this.customerEmail = customerEmail;
         this.seats = seats;
     }
 
     @Override
-    public Integer getId() {
-        return id;
+    public String getId() {
+        return this.id;
     }
 
     @Override
-    public Entity withId(Integer id) {
-        return new SeatHold(id, this);
+    public Entity withId(String id) {
+        return new SeatReserve(id, this);
     }
 
     public String getCustomerEmail() {
@@ -45,7 +43,7 @@ public class SeatHold implements Entity<Integer> {
     //    TODO: Remove
     @Override
     public String toString() {
-        return "SeatHold{" +
+        return "SeatReserve{" +
                 "id='" + id + '\'' +
                 ", customerEmail='" + customerEmail + '\'' +
                 ", seats=" + seats +
