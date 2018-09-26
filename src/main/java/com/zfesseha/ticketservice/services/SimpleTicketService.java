@@ -33,6 +33,7 @@ public class SimpleTicketService implements TicketService {
     @Override
     public String reserveSeats(int seatHoldId, String customerEmail) {
         SeatHold seatHold = seatHoldDao.remove(seatHoldId);
+        // TODO: Should this complain about non-matching email?
         if (seatHold == null) {
             throw new NoSeatHoldForIdException(seatHoldId);
         }

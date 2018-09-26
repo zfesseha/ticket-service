@@ -2,14 +2,20 @@ package com.zfesseha.ticketservice.services;
 
 import com.zfesseha.ticketservice.dao.SeatHoldDAO;
 import com.zfesseha.ticketservice.dao.SeatReservationDAO;
+import com.zfesseha.ticketservice.exceptions.NoSeatHoldForIdException;
 import com.zfesseha.ticketservice.models.SeatHold;
+import com.zfesseha.ticketservice.models.SeatReservation;
 import com.zfesseha.ticketservice.pool.SeatPool;
 import com.zfesseha.ticketservice.pool.SeatPoolFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class SimpleTicketServiceTest {
 
@@ -18,6 +24,9 @@ public class SimpleTicketServiceTest {
     private SeatReservationDAO seatReservationDAO;
 
     private static final String TEST_CUSTOMER_EMAIL = "test@email.com";
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -66,12 +75,43 @@ public class SimpleTicketServiceTest {
     }
 
     @Test
-    public void testReserveSeats() {
+    public void testReserveSeats_CanReserveHeldSeats() {
+        SeatHold seatHold = ticketService.findAndHoldSeats(7, TEST_CUSTOMER_EMAIL);
+        String reservationId = ticketService.reserveSeats(seatHold.getId(), seatHold.getCustomerEmail());
+        SeatReservation reservation = seatReservationDAO.get(reservationId);
+        verifyReservationDetails(reservation, seatHold);
+        assertEquals("Number of items in seatReservationDAO doesn't match expected.", 1, seatReservationDAO.getAll().size());
+    }
+
+    @Test
+    public void testReserveSeats_InvalidHoldIDThrowsException() {
+        SeatHold seatHold = ticketService.findAndHoldSeats(7, TEST_CUSTOMER_EMAIL);
+
+        thrown.expect(NoSeatHoldForIdException.class);
+        thrown.expectMessage("Couldn't find SeatHold for given id: [100].");
+        ticketService.reserveSeats(100, seatHold.getCustomerEmail());
+    }
+
+    @Test
+    public void testReserveSeats_heldSeatsAreRemovedFromSeatHoldDao() {
+        SeatHold seatHold = ticketService.findAndHoldSeats(4, TEST_CUSTOMER_EMAIL);
+        SeatHold seatHold2 = ticketService.findAndHoldSeats(8, TEST_CUSTOMER_EMAIL);
+        assertEquals("Number of items in seatHoldDAO doesn't match expected.", 2, seatHoldDAO.getAll().size());
+
+        String reservationId = ticketService.reserveSeats(seatHold.getId(), seatHold.getCustomerEmail());
+        assertEquals("Number of items in seatHoldDAO should decrease by 1", 1, seatHoldDAO.getAll().size());
+        assertNull("SeatHold should be removed from SeatHoldDAO", seatHoldDAO.get(seatHold.getId()));
+        assertNotNull("SeatHold2 should not be removed from SeatHoldDAO", seatHoldDAO.get(seatHold2.getId()));
     }
 
     private void verifySeatHoldsEqual(SeatHold seatHold1, SeatHold seatHold2) {
         assertEquals("Ids of the two seatHolds don't match.", seatHold1.getId(), seatHold2.getId());
         assertEquals("Customer emails of the two seatHolds don't match.", seatHold1.getCustomerEmail(), seatHold2.getCustomerEmail());
         assertEquals("Held seats of the two seatHolds don't match.", seatHold1.getSeats(), seatHold2.getSeats());
+    }
+
+    private void verifyReservationDetails(SeatReservation seatReservation, SeatHold seatHold) {
+        assertEquals("Customer email of the reservation doesn't match SeatHold.", seatHold.getCustomerEmail(), seatReservation.getCustomerEmail());
+        assertEquals("Reserved seats on the reservation don't match SeatHold.", seatHold.getSeats(), seatReservation.getSeats());
     }
 }
