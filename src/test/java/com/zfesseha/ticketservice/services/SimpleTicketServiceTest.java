@@ -46,18 +46,33 @@ public class SimpleTicketServiceTest {
     }
 
     @Test
-    public void testFindAndHoldSeats() {
+    public void testHoldSeats_ReturnedHoldObjectIsGood() {
         SeatHold seatHold = ticketService.findAndHoldSeats(10, TEST_CUSTOMER_EMAIL);
-        System.out.println(seatHold);
+        assertEquals("Number of seats held doesn't match expected.", 10, seatHold.getSeats().size());
+        assertEquals("Customer email doesn't match expected.", TEST_CUSTOMER_EMAIL, seatHold.getCustomerEmail());
+        verifySeatHoldsEqual(seatHold, seatHoldDAO.get(seatHold.getId()));
         seatHold = ticketService.findAndHoldSeats(9, TEST_CUSTOMER_EMAIL);
-        System.out.println(seatHold);
-        seatHold = ticketService.findAndHoldSeats(3, TEST_CUSTOMER_EMAIL);
-        System.out.println(seatHold);
-        System.out.println("-------");
-        System.out.println(seatHoldDAO.getAll());
+        verifySeatHoldsEqual(seatHold, seatHoldDAO.get(seatHold.getId()));
+    }
+
+    @Test
+    public void testHoldSeats_DaoSavesHoldObjectsCorrectly() {
+        SeatHold seatHold = ticketService.findAndHoldSeats(10, TEST_CUSTOMER_EMAIL);
+        verifySeatHoldsEqual(seatHold, seatHoldDAO.get(seatHold.getId()));
+        seatHold = ticketService.findAndHoldSeats(9, TEST_CUSTOMER_EMAIL);
+        verifySeatHoldsEqual(seatHold, seatHoldDAO.get(seatHold.getId()));
+        seatHold = ticketService.findAndHoldSeats(4, TEST_CUSTOMER_EMAIL);
+        verifySeatHoldsEqual(seatHold, seatHoldDAO.get(seatHold.getId()));
+        assertEquals("Number of items in seatHoldDAO doesn't match expected.", 3, seatHoldDAO.getAll().size());
     }
 
     @Test
     public void testReserveSeats() {
+    }
+
+    private void verifySeatHoldsEqual(SeatHold seatHold1, SeatHold seatHold2) {
+        assertEquals("Ids of the two seatHolds don't match.", seatHold1.getId(), seatHold2.getId());
+        assertEquals("Customer emails of the two seatHolds don't match.", seatHold1.getCustomerEmail(), seatHold2.getCustomerEmail());
+        assertEquals("Held seats of the two seatHolds don't match.", seatHold1.getSeats(), seatHold2.getSeats());
     }
 }
