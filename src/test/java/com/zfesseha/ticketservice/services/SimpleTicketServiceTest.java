@@ -1,9 +1,8 @@
 package com.zfesseha.ticketservice.services;
 
 import com.zfesseha.ticketservice.dao.SeatHoldDAO;
-import com.zfesseha.ticketservice.dao.SeatReserveDAO;
+import com.zfesseha.ticketservice.dao.SeatReservationDAO;
 import com.zfesseha.ticketservice.models.SeatHold;
-import com.zfesseha.ticketservice.models.SeatReserve;
 import com.zfesseha.ticketservice.pool.SeatPool;
 import com.zfesseha.ticketservice.pool.SeatPoolFactory;
 import org.junit.After;
@@ -16,7 +15,7 @@ public class SimpleTicketServiceTest {
 
     private SimpleTicketService ticketService;
     private SeatHoldDAO seatHoldDAO;
-    private SeatReserveDAO seatReserveDAO;
+    private SeatReservationDAO seatReservationDAO;
 
     private static final String TEST_CUSTOMER_EMAIL = "test@email.com";
 
@@ -24,8 +23,8 @@ public class SimpleTicketServiceTest {
     public void setUp() throws Exception {
         SeatPool seatPool = SeatPoolFactory.leftRightFrontBackRectangularSeatPool(20, 20);
         seatHoldDAO = new SeatHoldDAO();
-        seatReserveDAO = new SeatReserveDAO();
-        ticketService = new SimpleTicketService(seatPool, seatHoldDAO, seatReserveDAO);
+        seatReservationDAO = new SeatReservationDAO();
+        ticketService = new SimpleTicketService(seatPool, seatHoldDAO, seatReservationDAO);
     }
 
     @After

@@ -1,22 +1,22 @@
 package com.zfesseha.ticketservice.services;
 
 import com.zfesseha.ticketservice.dao.SeatHoldDAO;
-import com.zfesseha.ticketservice.dao.SeatReserveDAO;
+import com.zfesseha.ticketservice.dao.SeatReservationDAO;
 import com.zfesseha.ticketservice.exceptions.NoSeatHoldForIdException;
 import com.zfesseha.ticketservice.models.SeatHold;
-import com.zfesseha.ticketservice.models.SeatReserve;
+import com.zfesseha.ticketservice.models.SeatReservation;
 import com.zfesseha.ticketservice.pool.SeatPool;
 
 public class SimpleTicketService implements TicketService {
 
     private SeatPool seatPool;
     private SeatHoldDAO seatHoldDao;
-    private SeatReserveDAO seatReserveDao;
+    private SeatReservationDAO seatReservationDao;
 
-    public SimpleTicketService(SeatPool seatPool, SeatHoldDAO seatHoldDAO, SeatReserveDAO seatReserveDAO) {
+    public SimpleTicketService(SeatPool seatPool, SeatHoldDAO seatHoldDAO, SeatReservationDAO seatReservationDAO) {
         this.seatPool = seatPool;
         this.seatHoldDao = seatHoldDAO;
-        this.seatReserveDao = seatReserveDAO;
+        this.seatReservationDao = seatReservationDAO;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class SimpleTicketService implements TicketService {
         if (seatHold == null) {
             throw new NoSeatHoldForIdException(seatHoldId);
         }
-        SeatReserve seatReserve = seatReserveDao.save(SeatReserve.fromSeatHold(seatHold));
-        return seatReserve.getId();
+        SeatReservation seatReservation = seatReservationDao.save(SeatReservation.fromSeatHold(seatHold));
+        return seatReservation.getId();
     }
 }
