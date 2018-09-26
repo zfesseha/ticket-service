@@ -10,5 +10,7 @@ public interface EntityDAO<I, E extends Entity<I>> {
 
     E get(I id);
 
+    E remove(I id);
+
     Collection<E> getAll();
 }

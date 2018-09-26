@@ -32,6 +32,10 @@ public class SeatReserve implements Entity<String> {
         return new SeatReserve(id, this);
     }
 
+    public static SeatReserve fromSeatHold(SeatHold seatHold) {
+        return new SeatReserve(seatHold.getCustomerEmail(), seatHold.getSeats());
+    }
+
     public String getCustomerEmail() {
         return customerEmail;
     }

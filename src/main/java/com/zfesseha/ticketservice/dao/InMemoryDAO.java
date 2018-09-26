@@ -28,6 +28,11 @@ public abstract class InMemoryDAO<I, E extends Entity<I>> implements EntityDAO<I
     }
 
     @Override
+    public E remove(I id) {
+        return storage.remove(id);
+    }
+
+    @Override
     public Collection<E> getAll() {
         return storage.values();
     }
