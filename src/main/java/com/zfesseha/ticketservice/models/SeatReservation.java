@@ -43,14 +43,4 @@ public class SeatReservation implements Entity<String> {
     public Set<Seat> getSeats() {
         return seats;
     }
-
-    //    TODO: Remove
-    @Override
-    public String toString() {
-        return "SeatReservation{" +
-                "id='" + id + '\'' +
-                ", customerEmail='" + customerEmail + '\'' +
-                ", seats=" + seats +
-                '}';
-    }
 }

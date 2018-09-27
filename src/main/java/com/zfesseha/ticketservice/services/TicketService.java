@@ -2,6 +2,10 @@ package com.zfesseha.ticketservice.services;
 
 import com.zfesseha.ticketservice.models.SeatHold;
 
+/**
+ * The main interface of the ticket service system.
+ * This is the interface through which all seat transactions are performed.
+ */
 public interface TicketService {
     /**
      * The number of seats in the venue that are neither held nor reserved

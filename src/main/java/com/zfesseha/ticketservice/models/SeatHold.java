@@ -47,15 +47,4 @@ public class SeatHold implements Entity<Integer> {
     public DateTime getExpirationDate() {
         return expirationDate;
     }
-
-    //    TODO: Remove
-    @Override
-    public String toString() {
-        return "SeatHold{" +
-                "id=" + id +
-                ", customerEmail='" + customerEmail + '\'' +
-                ", seats=" + seats +
-                ", expirationDate=" + expirationDate +
-                '}';
-    }
 }

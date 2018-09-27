@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO: cleanup timers
+/**
+ * clean timers
+ */
 public class ExpirationTaskManager {
 
     private Timer timer;

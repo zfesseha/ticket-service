@@ -154,7 +154,6 @@ public class SimpleTicketServiceTest {
         assertNotNull("SeatHold2 should not be removed from SeatHoldDAO", seatHoldDAO.get(seatHold2.getId()));
     }
 
-    // TODO: Equals method in the actual objects might be better.
     private void verifySeatHoldsEqual(SeatHold seatHold1, SeatHold seatHold2) {
         assertEquals("Ids of the two seatHolds don't match.", seatHold1.getId(), seatHold2.getId());
         assertEquals("Customer emails of the two seatHolds don't match.", seatHold1.getCustomerEmail(), seatHold2.getCustomerEmail());
